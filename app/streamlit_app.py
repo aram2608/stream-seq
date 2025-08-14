@@ -29,12 +29,13 @@ with tab_input:
 
         # Submit button for input data
         if st.button("Submit data"):
-            if counts_file:
+            if counts_file and samples_file:
                 saved_counts = save_uploaded_file(counts_file, project_root / "inputs")
                 st.session_state["counts_path"] = str(saved_counts)
-            if samples_file:
                 saved_samples = save_uploaded_file(samples_file, project_root / "inputs")
                 st.session_state["samples_path"] = str(saved_samples)
+            else:
+                st.write("No data provided.")
 
         # Button to use provided example data
         if st.button("Use example data"):
@@ -49,10 +50,10 @@ with tab_input:
         cp = st.session_state.get("counts_path")
         sp = st.session_state.get("samples_path")
         if cp:
-            st.caption(f"Counts preview: {cp}")
+            st.caption(f"Count matrix preview: {cp}")
             st.dataframe(read_table_preview(Path(cp)))
         if sp:
-            st.caption(f"Samples preview: {sp}")
+            st.caption(f"Column data preview: {sp}")
             st.dataframe(read_table_preview(Path(sp)))
 
 with tab_params:
