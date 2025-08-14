@@ -17,7 +17,43 @@ ensure_project_dirs(project_root)
 tab_input, tab_params, tab_run, tab_results = st.tabs(["Inputs", "Parameters", "Run", "Results"])
 
 with tab_input:
-    st.write("Hellow World!")
+    st.subheader("Upload inputs or use example data")
+
+    # Create two new column containers
+    col1, col2 = st.columns(2)
+
+    with col1:
+        # Upload input files
+        counts_file = st.file_uploader("Counts (TSV with gene_id in first column)", type=["tsv", "txt"])
+        samples_file = st.file_uploader("Samples (CSV with columns: sample, condition[, batch])", type=["csv"])
+
+        # Submit button for input data
+        if st.button("Submit data"):
+            if counts_file:
+                saved_counts = save_uploaded_file(counts_file, project_root / "inputs")
+                st.session_state["counts_path"] = str(saved_counts)
+            if samples_file:
+                saved_samples = save_uploaded_file(samples_file, project_root / "inputs")
+                st.session_state["samples_path"] = str(saved_samples)
+
+        # Button to use provided example data
+        if st.button("Use example data"):
+            counts_path = Path("data/example/counts.tsv")
+            samples_path = Path("data/example/samples.csv")
+            st.session_state["counts_path"] = str(counts_path)
+            st.session_state["samples_path"] = str(samples_path)
+            st.success("Loaded example data.")
+
+    with col2:
+        # Saves a preview of the dataframe in the second column
+        cp = st.session_state.get("counts_path")
+        sp = st.session_state.get("samples_path")
+        if cp:
+            st.caption(f"Counts preview: {cp}")
+            st.dataframe(read_table_preview(Path(cp)))
+        if sp:
+            st.caption(f"Samples preview: {sp}")
+            st.dataframe(read_table_preview(Path(sp)))
 
 with tab_params:
     st.write("Hello World!")
