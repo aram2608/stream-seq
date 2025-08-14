@@ -1,6 +1,6 @@
 {
-  "counts": "data/example/counts.tsv",
-  "samples": "data/example/samples.csv",
+  "counts": "",
+  "samples": "",
   "design": "~ condition",
   "outdir": "project/results",
   "species": "org.Hs.eg.db",

@@ -70,9 +70,12 @@ with tab_params:
     samples_path = st.session_state.get("samples_path", "")
     design = st.text_input("Design formula (R syntax)", value="~ condition")
     outdir = st.text_input("Output directory", value=str(project_root / "results"))
-    species = st.text_input("Species annotation package (NOT ACTIVE)", value="org.Hs.eg.db")
-    use_tximport = st.checkbox("Use tximport (Kallisto/Salmon) (NOT ACTIVE)", value=False)
-    tximport_dir = st.text_input("Tximport directory (folder with quant files) (NOT ACTIVE)", value="")
+
+    # TODO: Add support for these functions later
+    st.markdown(":orange-badge[⚠️ Not currently supported]")
+    species = st.text_input("Species annotation package", value="org.Hs.eg.db", disabled=True)
+    use_tximport = st.checkbox("Use tximport (Kallisto/Salmon)", value=False, disabled=True)
+    tximport_dir = st.text_input("Tximport directory (folder with quant files)", value="", disabled=True)
 
     # Saves the analysis parameters for the session
     st.session_state["config"] = AnalysisConfig(
