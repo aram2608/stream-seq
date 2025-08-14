@@ -2,7 +2,7 @@ from __future__ import annotations
 from pathlib import Path
 import shutil
 import pandas as pd
-
+import streamlit as st
 
 def save_uploaded_file(uploaded_file, dest_dir: Path) -> Path:
     """Saves input files to project folders."""
@@ -30,6 +30,12 @@ def read_table_preview(path: Path, n: int = 5) -> pd.DataFrame:
         # assume tsv
         return pd.read_csv(path, sep="\t").head(n)
 
+def read_table_wiz(path: Path, n: int = 20) -> pd.DataFrame:
+    """Helper function to read in tables for file wiz."""
+    if path.suffix.lower() in [".csv"]:
+        return pd.read_csv(path).head(n)
+    else:
+        return pd.read_csv(path, sep="\t").head(n)
 
 def which(cmd: str) -> str | None:
     """

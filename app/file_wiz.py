@@ -1,5 +1,5 @@
 from pathlib import Path
-from utils import save_uploaded_file, ensure_project_dirs, read_table_preview, which
+from utils import save_uploaded_file, ensure_project_dirs, read_table_preview, which, read_table_wiz
 
 import streamlit as st
 import pandas as pd
@@ -44,11 +44,15 @@ with file_viewer:
             st.dataframe(read_table_preview(Path(f)))
 
 with formatter:
+    # Save file to session state to make it persistent across changes
     if file:
-        st.subheader("Select formatting options")
-        f = st.session_state.get("file_path")
-        if f:
-            st.caption(f"File: {f}")
-            st.dataframe(read_table_preview(Path(f)))
+        st.session_state.file_path = file
+
+    # Check to ensure the file is currently in session state
+    if "file_path" in st.session_state:
+        f = st.session_state.file_path
+        n = st.slider("Select number of columns", 20, 100, 20)
+        df = read_table_wiz(Path(f), n)
+        st.dataframe(df)
     else:
         st.subheader("Upload file to reformat")
