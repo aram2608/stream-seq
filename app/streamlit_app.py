@@ -158,4 +158,13 @@ with tab_run:
 # Results tab
 #########
 with tab_results:
-    st.write("Hello world!")
+    st.subheader("Results")
+    res_csv = Path(project_root / "results" / "deseq2_results.csv")
+    volcano_png = Path(project_root / "results" / "volcano.png")
+
+    if res_csv.exists():
+        df = pd.read_csv(res_csv)
+        st.dataframe(df.head(25))
+
+    if volcano_png.exists():
+        st.image(str(volcano_png), caption="Volcano plot")

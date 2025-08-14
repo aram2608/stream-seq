@@ -41,7 +41,7 @@ head(coldata)
 design <- as.formula(cfg$design)
 
 # Running DESeq analysis
-cat("Running DESeq2...")
+cat("Running DESeq2...\n")
 dds <- DESeqDataSetFromMatrix(countData = counts,
                             colData = coldata,
                             design = design)
@@ -50,3 +50,12 @@ dds <- DESeq(dds)
 # Saving result as a dataframe
 res <- results(dds)
 head(res)
+
+# Write out result file as a csv
+res_df <- as.data.frame(res) %>% rownames_to_column("gene")
+readr::write_csv(res_df, file.path(cfg$outdir, "deseq2_results.csv"))
+cat("\nWrote results: ", file.path(cfg$outdir, "deseq2_results.csv\n"))
+
+# Create volcano plot
+volcano_plot(res_df, file.path(cfg$outdir, "volcano.png"))
+cat("\nWrote volcano: ", file.path(cfg$outdir, "volcano.png"))
