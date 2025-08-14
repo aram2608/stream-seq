@@ -12,12 +12,15 @@ def save_uploaded_file(uploaded_file, dest_dir: Path) -> Path:
         f.write(uploaded_file.getbuffer())
     return dest
 
-
 def ensure_project_dirs(project_root: Path):
     """Helper function to ensure all project directories are created."""
     for sub in ["inputs", "config", "results", "logs"]:
         (project_root / sub).mkdir(parents=True, exist_ok=True)
 
+def ensure_project_dirs(project_root: Path):
+    """Helper function to ensure all project directories are created."""
+    for sub in ["files", "renamed", "formatted"]:
+        (project_root / sub).mkdir(parents=True, exist_ok=True)
 
 def read_table_preview(path: Path, n: int = 5) -> pd.DataFrame:
     """Helper function to preview input tables."""
