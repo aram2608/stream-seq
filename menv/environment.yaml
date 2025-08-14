@@ -1,0 +1,25 @@
+name: rnaseq-gui
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python>=3.10
+  - pip
+  - streamlit
+  - pandas
+  - pyarrow
+  - pyyaml
+  - click
+  - r-base>=4.3
+  - r-essentials
+  - r-jsonlite
+  - r-readr
+  - r-dplyr
+  - r-tibble
+  - r-ggplot2
+  - bioconductor-deseq2
+  - bioconductor-tximport
+  - bioconductor-apeglm
+  - bioconductor-annotationdbi
+  - bioconductor-org.hs.eg.db
+  - r-pheatmap
