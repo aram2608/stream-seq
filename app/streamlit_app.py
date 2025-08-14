@@ -61,7 +61,34 @@ with tab_input:
             st.dataframe(read_table_preview(Path(sp)))
 
 with tab_params:
-    st.write("Hello World!")
+    st.subheader("Analysis parameters")
+
+    # Parameters to be used in DESeq
+    counts_path = st.session_state.get("counts_path", "")
+    samples_path = st.session_state.get("samples_path", "")
+    design = st.text_input("Design formula (R syntax)", value="~ condition")
+    outdir = st.text_input("Output directory", value=str(project_root / "results"))
+    species = st.text_input("Species annotation package (NOT ACTIVE)", value="org.Hs.eg.db")
+    use_tximport = st.checkbox("Use tximport (Kallisto/Salmon) (NOT ACTIVE)", value=False)
+    tximport_dir = st.text_input("Tximport directory (folder with quant files) (NOT ACTIVE)", value="")
+
+    # Saves the analysis parameters for the session
+    st.session_state["config"] = AnalysisConfig(
+        counts=counts_path,
+        samples=samples_path,
+        design=design,
+        outdir=outdir,
+        species=species or None,
+        use_tximport=use_tximport,
+        tximport_dir=tximport_dir or None
+    )
+
+    # Exports parameters to JSON config file
+    if st.button("Save config"):
+        cfg = st.session_state["config"]
+        path = (project_root / "config" / "analysis.json")
+        cfg.write_json(path)
+        st.success(f"Saved config → {path}")
 
 with tab_run:
     st.write("Hello World!")
