@@ -51,8 +51,11 @@ dds <- DESeq(dds)
 res <- results(dds)
 head(res)
 
-# Write out result file as a csv
+# Save as a dataframe and format
 res_df <- as.data.frame(res) %>% rownames_to_column("gene")
+res_df <- formatting_func(res_df)
+
+# Write out result file as a csv
 readr::write_csv(res_df, file.path(cfg$outdir, "deseq2_results.csv"))
 cat("\nWrote results: ", file.path(cfg$outdir, "deseq2_results.csv\n"))
 
