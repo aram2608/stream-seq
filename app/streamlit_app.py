@@ -120,42 +120,40 @@ with tab_params:
 #########
 with tab_run:
     st.subheader("Run analysis")
-    col1, col2 = st.columns(2)
 
-    with col1:
-        # Load our R script
-        rscript = Path("r_engine/run_deseq.R")
-        st.text(f"Rscript path: {rscript}")
-        if which("Rscript") is None:
-            st.error("Rscript not found on PATH. Activate the conda env first.")
-        else:
-            # Button to run the R script
-            if st.button("Run R engine"):
-                # Retrieve a key from the session state
-                cfg = st.session_state.get("config")
-                if not cfg:
-                    st.error("Please configure parameters first.")
-                else:
-                    cfg_path = project_root / "config" / "analysis.json"
-                    cfg.write_json(cfg_path)
-                    with st.status("Running R engine…", expanded=True) as status:
-                        result = run_r_engine(rscript, cfg_path, workdir=Path("."))
+    # Load our R script
+    rscript = Path("r_engine/run_deseq.R")
+    st.text(f"Rscript path: {rscript}")
+    if which("Rscript") is None:
+        st.error("Rscript not found on PATH. Activate the conda env first.")
+    else:
+        # Button to run the R script
+        if st.button("Run R engine"):
+            # Retrieve a key from the session state
+            cfg = st.session_state.get("config")
+            if not cfg:
+                st.error("Please configure parameters first.")
+            else:
+                cfg_path = project_root / "config" / "analysis.json"
+                cfg.write_json(cfg_path)
+                with st.status("Running R engine…", expanded=True) as status:
+                    result = run_r_engine(rscript, cfg_path, workdir=Path("."))
 
-                        # Write out the outputs and errors produced
-                        st.write("**STDOUT**")
-                        st.code(result.stdout)
-                        st.write("**STDERR**")
-                        st.code(result.stderr)
+                    # Write out the outputs and errors produced
+                    st.write("**STDOUT**")
+                    st.code(result.stdout)
+                    st.write("**STDERR**")
+                    st.code(result.stderr)
 
-                        # Test for succesful execution
-                        if result.returncode == 0:
-                            status.update(label="Success", state="complete")
-                            st.success("Analysis completed.")
-                        else:
-                            status.update(label="Failed", state="error")
-                            st.error(
-                                f"R engine failed with exit code {result.returncode}"
-                            )
+                    # Test for succesful execution
+                    if result.returncode == 0:
+                        status.update(label="Success", state="complete")
+                        st.success("Analysis completed.")
+                    else:
+                        status.update(label="Failed", state="error")
+                        st.error(
+                            f"R engine failed with exit code {result.returncode}"
+                        )
 #########
 # Results tab
 #########

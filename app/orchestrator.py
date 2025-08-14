@@ -1,5 +1,5 @@
 from __future__ import annotations
-import subprocess, sys
+import subprocess
 from pathlib import Path
 
 
