@@ -34,6 +34,11 @@ with tab_input:
                 st.session_state["counts_path"] = str(saved_counts)
                 saved_samples = save_uploaded_file(samples_file, project_root / "inputs")
                 st.session_state["samples_path"] = str(saved_samples)
+                st.success("Loaded user data.")
+            elif counts_file:
+                st.write("Missing column data.")
+            elif samples_file:
+                st.write("Missing counts matrix.")
             else:
                 st.write("No data provided.")
 
@@ -49,10 +54,9 @@ with tab_input:
         # Saves a preview of the dataframe in the second column
         cp = st.session_state.get("counts_path")
         sp = st.session_state.get("samples_path")
-        if cp:
+        if cp and sp:
             st.caption(f"Count matrix preview: {cp}")
             st.dataframe(read_table_preview(Path(cp)))
-        if sp:
             st.caption(f"Column data preview: {sp}")
             st.dataframe(read_table_preview(Path(sp)))
 
