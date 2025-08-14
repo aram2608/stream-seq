@@ -11,7 +11,9 @@ st.title("stream-seq — Python UI + R/DESeq2 Engine")
 
 # Set up out project root and associated directories for I/O
 project_root = Path(st.text_input("Project directory", value="project"))
-ensure_project_dirs(project_root)
+if st.button("Load project directory"):
+    ensure_project_dirs(project_root)
+    st.success("Directory saved with necessary sub directories.")
 
 # Create tabs for I/O operations
 tab_input, tab_params, tab_run, tab_results = st.tabs(["Inputs", "Parameters", "Run", "Results"])
