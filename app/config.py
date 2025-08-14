@@ -7,6 +7,7 @@ import json
 @dataclass
 class AnalysisConfig:
     """A data class to represent the configuration file used in the R engine."""
+
     counts: str
     samples: str
     design: str

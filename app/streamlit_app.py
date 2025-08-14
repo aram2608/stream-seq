@@ -16,8 +16,13 @@ if st.button("Load project directory"):
     st.success("Directory saved with necessary sub directories.")
 
 # Create tabs for I/O operations
-tab_input, tab_params, tab_run, tab_results = st.tabs(["Inputs", "Parameters", "Run", "Results"])
+tab_input, tab_params, tab_run, tab_results = st.tabs(
+    ["Inputs", "Parameters", "Run", "Results"]
+)
 
+#########
+# I/O Tab
+#########
 with tab_input:
     st.subheader("Upload inputs or use example data")
 
@@ -26,15 +31,21 @@ with tab_input:
 
     with col1:
         # Upload input files
-        counts_file = st.file_uploader("Counts (TSV with gene_id in first column)", type=["tsv", "txt"])
-        samples_file = st.file_uploader("Samples (CSV with columns: sample, condition[, batch])", type=["csv"])
+        counts_file = st.file_uploader(
+            "Counts (TSV with gene_id in first column)", type=["tsv", "txt"]
+        )
+        samples_file = st.file_uploader(
+            "Samples (CSV with columns: sample, condition[, batch])", type=["csv"]
+        )
 
         # Submit button for input data
         if st.button("Submit data"):
             if counts_file and samples_file:
                 saved_counts = save_uploaded_file(counts_file, project_root / "inputs")
                 st.session_state["counts_path"] = str(saved_counts)
-                saved_samples = save_uploaded_file(samples_file, project_root / "inputs")
+                saved_samples = save_uploaded_file(
+                    samples_file, project_root / "inputs"
+                )
                 st.session_state["samples_path"] = str(saved_samples)
                 st.success("Loaded user data.")
             elif counts_file:
@@ -62,6 +73,9 @@ with tab_input:
             st.caption(f"Column data preview: {sp}")
             st.dataframe(read_table_preview(Path(sp)))
 
+#########
+# Parameter tab
+#########
 with tab_params:
     st.subheader("Analysis parameters")
 
@@ -73,9 +87,15 @@ with tab_params:
 
     # TODO: Add support for these functions later
     st.markdown(":orange-badge[⚠️ Not currently supported]")
-    species = st.text_input("Species annotation package", value="org.Hs.eg.db", disabled=True)
-    use_tximport = st.checkbox("Use tximport (Kallisto/Salmon)", value=False, disabled=True)
-    tximport_dir = st.text_input("Tximport directory (folder with quant files)", value="", disabled=True)
+    species = st.text_input(
+        "Species annotation package", value="org.Hs.eg.db", disabled=True
+    )
+    use_tximport = st.checkbox(
+        "Use tximport (Kallisto/Salmon)", value=False, disabled=True
+    )
+    tximport_dir = st.text_input(
+        "Tximport directory (folder with quant files)", value="", disabled=True
+    )
 
     # Saves the analysis parameters for the session
     st.session_state["config"] = AnalysisConfig(
@@ -85,18 +105,59 @@ with tab_params:
         outdir=outdir,
         species=species or None,
         use_tximport=use_tximport,
-        tximport_dir=tximport_dir or None
+        tximport_dir=tximport_dir or None,
     )
 
     # Exports parameters to JSON config file
     if st.button("Save config"):
         cfg = st.session_state["config"]
-        path = (project_root / "config" / "analysis.json")
+        path = project_root / "config" / "analysis.json"
         cfg.write_json(path)
         st.success(f"Saved config → {path}")
 
+#########
+# Tab to run analysis
+#########
 with tab_run:
-    st.write("Hello World!")
+    st.subheader("Run analysis")
+    col1, col2 = st.columns(2)
 
+    with col1:
+        # Load our R script
+        rscript = Path("r_engine/run_deseq.R")
+        st.text(f"Rscript path: {rscript}")
+        if which("Rscript") is None:
+            st.error("Rscript not found on PATH. Activate the conda env first.")
+        else:
+            # Button to run the R script
+            if st.button("Run R engine"):
+                # Retrieve a key from the session state
+                cfg = st.session_state.get("config")
+                if not cfg:
+                    st.error("Please configure parameters first.")
+                else:
+                    cfg_path = project_root / "config" / "analysis.json"
+                    cfg.write_json(cfg_path)
+                    with st.status("Running R engine…", expanded=True) as status:
+                        result = run_r_engine(rscript, cfg_path, workdir=Path("."))
+
+                        # Write out the outputs and errors produced
+                        st.write("**STDOUT**")
+                        st.code(result.stdout)
+                        st.write("**STDERR**")
+                        st.code(result.stderr)
+
+                        # Test for succesful execution
+                        if result.returncode == 0:
+                            status.update(label="Success", state="complete")
+                            st.success("Analysis completed.")
+                        else:
+                            status.update(label="Failed", state="error")
+                            st.error(
+                                f"R engine failed with exit code {result.returncode}"
+                            )
+#########
+# Results tab
+#########
 with tab_results:
     st.write("Hello world!")
