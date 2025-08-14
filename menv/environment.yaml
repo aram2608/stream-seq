@@ -1,4 +1,4 @@
-name: rnaseq-gui
+name: stream-seq
 channels:
   - conda-forge
   - bioconda
