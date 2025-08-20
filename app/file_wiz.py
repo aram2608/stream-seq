@@ -1,5 +1,11 @@
 from pathlib import Path
-from utils import save_uploaded_file, ensure_project_dirs, read_table_preview, which, read_table_wiz
+from utils import (
+    save_uploaded_file,
+    ensure_project_dirs,
+    read_table_preview,
+    which,
+    read_table_wiz,
+)
 
 import streamlit as st
 import pandas as pd
@@ -19,9 +25,7 @@ with file_viewer:
     st.subheader("Upload inputs or use example data")
 
     # Upload input files
-    file = st.file_uploader(
-        "File you wish to view", type=["tsv", "txt", "csv"]
-    )
+    file = st.file_uploader("File you wish to view", type=["tsv", "txt", "csv"])
 
     if st.button("Submit data"):
         if file:

@@ -151,9 +151,7 @@ with tab_run:
                         st.success("Analysis completed.")
                     else:
                         status.update(label="Failed", state="error")
-                        st.error(
-                            f"R engine failed with exit code {result.returncode}"
-                        )
+                        st.error(f"R engine failed with exit code {result.returncode}")
 #########
 # Results tab
 #########
